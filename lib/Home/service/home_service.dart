@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:weather/Home/model/home_model.dart';
-import 'package:weather/Home/model/home_other_model.dart';
 
 enum EnumCityName{
   Moscow, NewYorkCity,Istanbul, London,Paris,Tokyo
@@ -36,10 +35,9 @@ class HomeService {
   
 
 
-
-  Future<HomeModel?> fetchData() async {
+  Future<HomeModel?> getDataFromIPA() async {
     try {
-      final response = await dio.get(_url);
+      final response = await dio.get(_urlOtherDays);
       if (response.statusCode == 200) {
         return HomeModel.fromJson(response.data);
       } else {
@@ -51,11 +49,11 @@ class HomeService {
     }
   }
 
-  Future<HomeModelOtherDays?> fetchOtherDaysData() async {
+  Future<HomeModel?> getDataFromIPAWithEnum(EnumCityName enumCityName) async {
     try {
-      final response = await dio.get(_urlOtherDays);
+      final response = await dio.get("http://api.openweathermap.org/data/2.5/forecast?id=${enumCityName.ids()}&appid=165eea882ce94482baf85e80def4b1d1");
       if (response.statusCode == 200) {
-        return HomeModelOtherDays.fromJson(response.data);
+        return HomeModel.fromJson(response.data);
       } else {
         print('${response.statusCode} : ${response.data.toString()}');
         throw response.statusCode.toString();
