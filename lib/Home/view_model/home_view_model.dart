@@ -6,6 +6,19 @@ import '../view/home_view.dart';
 
 abstract class HomeViewModel extends State<HomeView>{
 
+List<Future<HomeModel>> homeModelList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    homeModelFuture = fechDataFromService();
+    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.Istanbul));
+    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.NewYorkCity));
+    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.Moscow));
+    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.Paris));
+    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.London));
+  }
+  
   HomeService homeService = HomeService();
   late Future<HomeModel> homeModelFuture;
    late HomeModel model;

@@ -32,13 +32,18 @@ class HomeService {
 
   final String _urlOtherDays = "http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=165eea882ce94482baf85e80def4b1d1";
 
-  
 
 
   Future<HomeModel?> getDataFromIPA() async {
     try {
       final response = await dio.get(_urlOtherDays);
       if (response.statusCode == 200) {
+        if (HomeModel.fromJson(response.data).list is List) {
+          print("Liste");
+        } else {
+          print("Liste değil");
+          
+        }
         return HomeModel.fromJson(response.data);
       } else {
         print('${response.statusCode} : ${response.data.toString()}');

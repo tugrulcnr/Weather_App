@@ -12,19 +12,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends HomeViewModel {
-  List<Future<HomeModel>> homeModelList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    homeModelFuture = fechDataFromService();
-    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.Istanbul));
-    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.NewYorkCity));
-    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.Moscow));
-    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.Paris));
-    homeModelList.add(fechDataFromServiceWithEnum(EnumCityName.London));
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,52 +22,13 @@ class _HomeViewState extends HomeViewModel {
       ),
       body: SingleChildScrollView(
         scrollDirection:Axis.vertical,
-        
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            // CityNameAndDate(homeModelOtherDaysFuture: homeModelOtherDaysFuture),
-      
+          children: [      
             FutureBuilder<HomeModel>(
               future: homeModelFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error fetching data'));
-                } else if (!snapshot.hasData) {
-                  return Center(child: Text('No data available'));
-                } else {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        title: Text(snapshot.data!.city.name,
-                            style: TextStyle(
-                                fontSize: 40, fontWeight: FontWeight.w300)),
-                        subtitle: DateTextWidget(snapshot: snapshot, index: 0,),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image.network(
-                              "https://openweathermap.org/img/wn/${snapshot.data!.list[0].weather[0].icon}@4x.png",
-                            ),
-                            TextOfTemp(
-                              snapshot: snapshot,
-                              fontSize: 75,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                }
-              },
+              builder: builder,
             ),
             SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -113,6 +62,44 @@ class _HomeViewState extends HomeViewModel {
       ),
     );
   }
+
+  Widget builder(context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('Error fetching data'));
+              } else if (!snapshot.hasData) {
+                return const Center(child: Text('No data available'));
+              } else {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Text(snapshot.data!.city.name,
+                          style: const TextStyle(
+                              fontSize: 40, fontWeight: FontWeight.w300)),
+                      subtitle: DateTextWidget(snapshot: snapshot, index: 0,),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.network(
+                            "https://openweathermap.org/img/wn/${snapshot.data!.list[0].weather[0].icon}@4x.png",
+                          ),
+                          TextOfTemp(
+                            snapshot: snapshot,
+                            fontSize: 75,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
+            }
 
   Widget weatherCards(
       AsyncSnapshot<HomeModel> snapshot, EnumCityName enumCityName) {
